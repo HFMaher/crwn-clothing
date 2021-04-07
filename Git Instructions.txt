@@ -1,0 +1,7 @@
+create repository in GitHub and copy the URL
+
+git remote add origin (copied url)
+git status
+git add -A
+git commit -m "created react app"
+git push origin
