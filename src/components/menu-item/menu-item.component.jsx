@@ -27,4 +27,5 @@ const MenuItem=({title,imageUrl,size,history,linkUrl,match}) => (
 
 );
 
-export default withRouter(MenuItem);
+export default withRouter(MenuItem); //withRouter enables this component to use history props without requiring to pass it from the
+                                      // home component
