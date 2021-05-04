@@ -8,7 +8,7 @@ import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component'
 import Header from './components/header/header.component.jsx';
-import {auth} from './firebase/firebase.utils';
+import {auth,createUserProfileDocument} from './firebase/firebase.utils';
 
 
 const HatsPage=() =>(
@@ -32,12 +32,31 @@ class App extends React.Component {
 
   unsubscibeFromAuth=null;
 
-  componentDidMount(){
-    auth.onAuthStateChanged(user => {
-      this.setState({currentUser: user});
+  componentDidMount(){ //Auth refers to Authentication in Firestore (firebase.google.com)
 
-      console.log(user);
-    })
+   this.unsubscibeFromAuth= auth.onAuthStateChanged(async userAuth => { //signin or Sigout callback. Everywhere the user signin or signout, userAuth will change and the state changes which result in the header component being updated
+     if(userAuth) { //if user is signed in
+       const userRef=await createUserProfileDocument(userAuth); //create a user in the database (Firebase database)
+
+       userRef.onSnapshot(snapshot => { //onSnapshot changed callback
+          this.setState({
+            currentUser: {
+             id:snapshot.id,
+             ...snapshot.data()
+   
+
+            }
+          });
+
+          console.log(this.state);
+
+       });
+
+     }
+     
+    this.setState({currentUser: userAuth}); //if user is signed out, set it to null
+      
+    });
   }
 
   componentWillUnmount(){
