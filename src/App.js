@@ -2,13 +2,16 @@ import React from 'react';
 
 import './App.css';
 
-import {Switch,Route} from 'react-router-dom';
+import {Switch,Route, Redirect} from 'react-router-dom';
 
 import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component'
 import Header from './components/header/header.component.jsx';
 import {auth,createUserProfileDocument} from './firebase/firebase.utils';
+
+import {connect} from 'react-redux';
+import {setCurrentUser} from './redux/user/user.actions';
 
 
 const HatsPage=() =>(
@@ -21,40 +24,33 @@ const HatsPage=() =>(
 );
 
 class App extends React.Component {
-  constructor(){
-    super();
-
-    this.state={
-      currentUser:null
-    }
-
-  }
+ 
 
   unsubscibeFromAuth=null;
 
   componentDidMount(){ //Auth refers to Authentication in Firestore (firebase.google.com)
 
-   this.unsubscibeFromAuth= auth.onAuthStateChanged(async userAuth => { //signin or Sigout callback. Everywhere the user signin or signout, userAuth will change and the state changes which result in the header component being updated
+    const {setCurrentUser}=this.props;  //setCurrentUser is Redux action
+
+   this.unsubscibeFromAuth= auth.onAuthStateChanged(async userAuth => { //signin or Sigout callback, return a function which is called in ComponentwillUnmount. Everywhere the user signin or signout, userAuth will change and the state changes which result in the header component being updated
      if(userAuth) { //if user is signed in
        const userRef=await createUserProfileDocument(userAuth); //create a user in the database (Firebase database)
 
-       userRef.onSnapshot(snapshot => { //onSnapshot changed callback
-          this.setState({
-            currentUser: {
+       userRef.onSnapshot(snapshot => { //onSnapshot changed callback,is called whenever user snapshot updates
+
+          setCurrentUser({     //Redux Action Method
              id:snapshot.id,
              ...snapshot.data()
    
 
-            }
+            });
           });
 
-          console.log(this.state);
-
-       });
+          //console.log(this.state);
 
      }
      
-    this.setState({currentUser: userAuth}); //if user is signed out, set it to null
+    setCurrentUser(userAuth); //if user is signed out, set the state to null
       
     });
   }
@@ -66,14 +62,25 @@ class App extends React.Component {
   render() {
   return (
     <div >
-     <Header currentUser={this.state.currentUser}/>
+     <Header />
      <Switch>
     <Route exact  path='/' component= {HomePage}/>
     <Route path='/shop' component= {ShopPage}/>
-    <Route path='/signin' component= {SignInAndSignUpPage}/>
+    <Route exact path='/signin' render={()=>this.props.currentUser ? (<Redirect to='/' />) : (<SignInAndSignUpPage/>)}/>
      </Switch>
     </div>
   );
 }
 }
-export default App;
+
+const mapStateToProps=({user}) => ({  //destructuring the Root Reducer
+ currentUser:user.currentUser
+});
+
+const mapDispatchToProps=dispatch => ({
+  setCurrentUser:user => dispatch(setCurrentUser(user))
+});
+
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(App);

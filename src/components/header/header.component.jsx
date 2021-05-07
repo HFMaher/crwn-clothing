@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 import './header.styles.scss'
 import {auth} from '../../firebase/firebase.utils';
@@ -20,19 +21,25 @@ const Header=({currentUser}) =>(
      CONTACT
     </Link>
     {
-      currentUser ?
-      <div className='option' onClick={()=> auth.signOut()}>SIGN OUT</div> //when this is clicked, state will change by making the currentUser null
-      :
+      currentUser ? (
+      <div className='option' onClick={()=> auth.signOut()}>
+         SIGN OUT
+         </div> //when this is clicked, state will change by making the currentUser null
+      ):(
       <Link className='option' to='/signin'>
        SIGN IN
       </Link>
 
 
 
-    }
+      )}
    </div>
   </div>
 
-)
+);
 
-export default Header;
+const mapStateToProps=state=> ({           
+ currentUser:state.user.currentUser   //root-reducer (combineReducer).user
+});
+
+export default connect(mapStateToProps)(Header);
