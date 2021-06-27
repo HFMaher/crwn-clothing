@@ -13,6 +13,8 @@ import {auth,createUserProfileDocument} from './firebase/firebase.utils';
 import {connect} from 'react-redux';
 import {setCurrentUser} from './redux/user/user.actions';
 
+// Authentication is done in App.js, firebase.utils.js, sign-in.component
+
 
 const HatsPage=() =>(
 <div>
@@ -33,8 +35,9 @@ class App extends React.Component {
     const {setCurrentUser}=this.props;  //setCurrentUser is Redux action
 
    this.unsubscibeFromAuth= auth.onAuthStateChanged(async userAuth => { //signin or Sigout callback, return a function which is called in ComponentwillUnmount. Everywhere the user signin or signout, userAuth will change and the state changes which result in the header component being updated
-     if(userAuth) { //if user is signed in
-       const userRef=await createUserProfileDocument(userAuth); //create a user in the database (Firebase database)
+     if(userAuth) { //if user is signed in, userAuth.uid is the id that is displayed next to the user in Firebase Authentication
+
+       const userRef=await createUserProfileDocument(userAuth); //create a user in the database (Firebase database), or return existing user
 
        userRef.onSnapshot(snapshot => { //onSnapshot changed callback,is called whenever user snapshot updates
 

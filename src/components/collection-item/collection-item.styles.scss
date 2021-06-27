@@ -4,6 +4,7 @@
     flex-direction: column; //the image and the footer are aligned vertically
     height: 350px;
     align-items: center;
+    position: relative;   // this will make a collection item a frame of reference so that the custom-button (below) is absolutely position relative to it
   
     .image {
       width: 100%;
@@ -11,6 +12,28 @@
       background-size: cover;
       background-position: center;
       margin-bottom: 5px;
+    }
+
+    .custom-button {
+      width: 80%;
+      opacity: 0.7;
+      position: absolute; //absolutely positioned relative to its parent (.collection-item) which has the position relative property
+      top:225px;
+      display:none; //to support the hover effect below
+    }
+
+    &:hover {
+
+      .image {
+        opacity:0.8;
+      }
+
+      .custom-button {
+        opacity:0.85;
+        display:flex;
+
+      }
+
     }
   
     .collection-footer {
