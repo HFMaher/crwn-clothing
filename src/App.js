@@ -15,6 +15,12 @@ import {setCurrentUser} from './redux/user/user.actions';
 
 // Authentication is done in App.js, firebase.utils.js, sign-in.component
 
+// shop.component.jsx
+    //collection-preview
+        //collection-item     pushed cart items to the store
+
+//collection-preview received cart items from the store
+
 
 const HatsPage=() =>(
 <div>

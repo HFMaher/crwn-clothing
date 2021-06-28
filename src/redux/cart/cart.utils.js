@@ -1,4 +1,4 @@
-export const addItemToCart=(cartItems,cartItemToAdd) => {
+export const addItemToCart=(cartItems,cartItemToAdd) => { //group items in cart
 
  const existingCartItem=cartItems.find(
   cartItem =>cartItem.id===cartItemToAdd.id
@@ -16,7 +16,7 @@ export const addItemToCart=(cartItems,cartItemToAdd) => {
 
  }
 
-return [...cartItems,{...cartItemToAdd,quantity:1}] //return a new array (if it is a new item)
+return [...cartItems,{...cartItemToAdd,quantity:1}] //return a new array by spreading existing cartItems and the newly added item (if it is a new item)
 
 
 };
